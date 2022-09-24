@@ -20,7 +20,8 @@ body {
     font-family: Helvetica, Arial, sans-serif;
 }
 
-h1 {
+h1,
+h2 {
     margin-bottom: 16px;
 }
 
@@ -31,12 +32,15 @@ label {
     color: #777;
 }
 
-input {
+input,
+select {
     border: 1px solid #eeeeee;
     padding: 12px;
     outline: none;
 }
-
+option{
+    padding: 16px;
+}
 button {
     cursor: pointer;
     padding: 12px;
@@ -61,7 +65,7 @@ button:disabled {
 .centered-form {
     background: #333744;
     width: 100vw;
-    height: 100vh;   
+    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -78,9 +82,22 @@ button:disabled {
     width: 100%;
 }
 
-.centered-form input {
+.centered-form input,
+.room-options__item label,
+.centered-form select {
     margin-bottom: 16px;
     width: 100%;
+}
+
+.room-options {
+    display: flex;
+    width: 100%;
+    gap: 1rem;
+}
+
+.room-options__item {
+    display: flex;
+    gap: 1rem;
 }
 
 /* Chat Page Layout */
@@ -104,6 +121,7 @@ button:disabled {
     display: flex;
     flex-direction: column;
     max-height: 100vh;
+
 }
 
 .chat__messages {
@@ -116,10 +134,10 @@ button:disabled {
 
 .message {
     margin-bottom: 16px;
-    background-color: aqua;  
+    background-color: aqua;
     width: fit-content;
     max-width: 900px;
-    border-radius: 5px; 
+    border-radius: 5px;
     padding: 15px;
     word-wrap: break-word;
 }
@@ -139,6 +157,11 @@ button:disabled {
     color: #0070CC;
 }
 
+.admin__message {
+    line-height: 2;
+    margin-bottom: 5px;
+}
+
 /* Message Composition Styles */
 
 .compose {
@@ -156,13 +179,13 @@ button:disabled {
 
 .compose input {
     border: 1px solid #eeeeee;
-    width: 100%;
+    max-width: 100%;
     padding: 12px;
     margin: 0 16px 0 0;
     flex-grow: 1;
 }
 
-.compose input:focus{
+.compose input:focus {
     border-bottom: 3px solid #0070CC;
 }
 
@@ -176,7 +199,9 @@ button:disabled {
     font-weight: 400;
     font-size: 22px;
     background: #2c2f3a;
-    padding: 24px;   
+    padding: 24px;
+    display: flex;
+    gap: 2rem;
 }
 
 .list-title {
@@ -190,4 +215,35 @@ button:disabled {
     list-style-type: none;
     font-weight: 300;
     padding: 12px 24px 0 24px;
+}
+
+.user{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 20px;
+}
+
+.user__icon {
+    font-size: 12px;
+    background-color: rgb(22, 144, 192);
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    text-transform: uppercase;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.room__icon {
+    background-color: rgb(44, 158, 44);
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    text-transform: uppercase;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

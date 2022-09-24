@@ -53,12 +53,22 @@ const getUser = (id) => {
 
 const getUsersInRoom = (room) => {
     room = room.trim().toLowerCase()
-    return users.filter(user => user.room === room)
+    const roomUsers = users.filter(user => user.room === room)
+    roomUsers.forEach(user => {
+        user['userIcon'] =  user.username.charAt(0)+' '+user.username.charAt(user.username.length -1)
+    })
+    return roomUsers
+}
+
+
+const getRooms = () => {
+    return users.map(user => user.room).filter((value, index, self) => self.indexOf(value) === index)
 }
 
 module.exports = {
     addUser,
     removeUser,
     getUser,
-    getUsersInRoom
+    getUsersInRoom,
+    getRooms
 }

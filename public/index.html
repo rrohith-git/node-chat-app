@@ -14,16 +14,51 @@
     <div class="centered-form">
         <div class="centered-form__box">
             <h1>Join</h1>
-            <form action="/chat.html"> 
+            <form action="/chat.html">
                 <label for="username">Display name</label>
                 <input type="text" name="username" placeholder="Display name" required>
                 <label for="room">Room</label>
-                <input name="room" type="text" placeholder="room" required>
-                <button>Join</button>
+                <div class="room-options">
+                    <div class="room-options__item">
+                        <input type="checkbox" class="checkOption" id="new-room" onclick="handleOptionSelect(this)">
+                        <label for="new-room">New</label>
+                    </div>
+                    <div class="room-options__item">
+                        <input type="checkbox" class="checkOption" id="existing-room" onclick="handleOptionSelect(this)">
+                        <label for="existing-room">Existing</label>
+                    </div>
+                </div>
+                <div id="room-field"></div>
+                <button id="join__btn">Join</button>
             </form>
         </div>
     </div>
 
+    <script id="new-room-template" type="text/html">
+        <div>
+            <input name="room" type="text" placeholder="room" required> 
+        </div>
+    </script>
+
+    <script id="existing-room-template" type="text/html">
+        <div class="custom-select">
+            <select name="room" id="existing-rooms">
+                {{#rooms}}
+                <option value={{.}}>{{.}}</option>
+                {{/rooms}}
+            </select>
+        </div>
+    </script>
+
+    <script id="no-room-template" type="text/html">
+        <div>
+            <h2>No rooms avaiable!</h2>
+        </div>
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/3.0.1/mustache.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/index.js"></script>
 </body>
 
 </html>

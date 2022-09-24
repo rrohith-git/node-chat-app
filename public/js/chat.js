@@ -12,17 +12,22 @@ const $message = document.querySelector('#messages')
 const messageTemplate = document.querySelector('#message-template').innerHTML
 const locationMessageTemplate = document.querySelector('#location-message-template').innerHTML
 const sideBarTemplate = document.querySelector('#sidebar-template').innerHTML
+const adminMessageTemplate = document.querySelector('#admin-message-template').innerHTML
 
 // options
 const { username, room } = Qs.parse(location.search, { ignoreQueryPrefix: true })
 
-const autoScroll = () => {
+const autoScroll = (messageId,socketId) => {
     // New message element
     const $newMessage = $message.lastElementChild
 
+    // Display current user message on right
+    if(messageId === socketId){
+        $newMessage.style.marginLeft = 'auto'
+    }
     // Height of the new(last) message
     const newMessageStyles = getComputedStyle($newMessage)
-    const newMessageMargin = parseInt(newMessageStyles.marginBottom)
+    const newMessageMargin = parseInt(newMessageStyles.marginBottom) + parseInt(newMessageStyles.marginLeft)
     const newMessageHeight = $newMessage.offsetHeight + newMessageMargin
 
     // Visible height
@@ -34,20 +39,28 @@ const autoScroll = () => {
     // How far have i scrolled?
     const srcollOffset = $message.scrollTop + visibleHeight
 
-    if(containerHeight - newMessageHeight <= srcollOffset){
+    if(containerHeight - newMessageHeight < srcollOffset){
         $message.scrollTop = $message.scrollHeight
     }
 
 }
 
 socket.on('message', (message) => {
-    const html = Mustache.render(messageTemplate, {
-        username: message.username,
-        createdAt: moment(message.createdAt).format('hh:mm a'),
-        message: message.text
-    })
-    $message.insertAdjacentHTML('beforeend', html)
-    autoScroll()
+    if(message.username === 'Admin'){
+        const adminHtml = Mustache.render(adminMessageTemplate,{
+            createdAt: moment(message.createdAt).format('hh:mm a'),
+            message: message.text
+        })
+        $message.insertAdjacentHTML('beforeend',adminHtml)
+    }else{
+        const html = Mustache.render(messageTemplate, {
+            username: message.username,
+            createdAt: moment(message.createdAt).format('hh:mm a'),
+            message: message.text
+        })
+        $message.insertAdjacentHTML('beforeend', html)
+    }
+    autoScroll(message.id,socket.id)
 })
 
 socket.on('locationMessage', (locationMessage) => {
@@ -57,11 +70,12 @@ socket.on('locationMessage', (locationMessage) => {
         locationUrl: locationMessage.url
     })
     $message.insertAdjacentHTML('beforeend', html)
-    autoScroll()
+    autoScroll(locationMessage.id,socket.id)
 })
 
 socket.on('roomData', ({room, users}) => {
     const html = Mustache.render(sideBarTemplate,{
+        roomIcon: room.charAt(0)+' '+room.charAt(room.length -1),
         room,
         users
     })

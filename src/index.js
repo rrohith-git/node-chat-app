@@ -5,7 +5,7 @@ const socketio = require('socket.io')
 const Filter = require('bad-words')
 
 const { generateMessage, generateLocationMessage } = require('./utils/messages')
-const { addUser, getUser, getUsersInRoom, removeUser } = require('./utils/users')
+const { addUser, getUser, getUsersInRoom, removeUser, getRooms } = require('./utils/users')
 
 const app = express()
 const server = http.createServer(app)
@@ -20,6 +20,8 @@ app.use(express.json())
 
 io.on('connection', (socket) => {
 
+    io.emit('rooms',getRooms())
+
     socket.on('join', (options, cb) => {
         const { error, user } = addUser({ id: socket.id, ...options })
         if (error) {
@@ -28,8 +30,8 @@ io.on('connection', (socket) => {
         // join method can only be invoked on server side and it allows use to join a room and also us to join multiple rooms
         // by default it allows to join the room with same as our id
         socket.join(user.room)
-        socket.emit('message', generateMessage('Admin', 'Welcome!')) // emiting event only to current client connected
-        socket.broadcast.to(user.room).emit('message', generateMessage('Admin', `${user.username} has joined!`)) // emiting events to all the clients except to the current one in specific room
+        socket.emit('message', generateMessage('Admin','Admin', `Welcome ${user.username}`)) // emiting event only to current client connected
+        socket.broadcast.to(user.room).emit('message', generateMessage('Admin','Admin', `${user.username} has joined the chat`)) // emiting events to all the clients except to the current one in specific room
         io.to(user.room).emit('roomData', {
             room: user.room,
             users: getUsersInRoom(user.room)
@@ -46,7 +48,7 @@ io.on('connection', (socket) => {
         if (filter.isProfane(message)) {
             return cb('Profanity is not allowed')
         }
-        io.to(user.room).emit('message', generateMessage(user.username, message)) // emiting event to all the clients connected to this server
+        io.to(user.room).emit('message', generateMessage(user.id,user.username, message)) // emiting event to all the clients connected to this server
         cb()
     })
 
@@ -55,7 +57,7 @@ io.on('connection', (socket) => {
         if (!user.id) {
             return
         }
-        io.to(user.room).emit('locationMessage', generateLocationMessage(user.username, latitude, longitude))
+        io.to(user.room).emit('locationMessage', generateLocationMessage(user.id,user.username, latitude, longitude))
         cb()
     })
 
@@ -64,7 +66,7 @@ io.on('connection', (socket) => {
         if (!user.id) {
             return
         }
-        io.to(user.room).emit('message', generateMessage('Admin', `${user.username} has left!`))
+        io.to(user.room).emit('message', generateMessage('Admin','Admin', `${user.username} has left the chat`))
         io.to(user.room).emit('roomData', {
             room: user.room,
             users: getUsersInRoom(user.room)
